@@ -10,6 +10,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import BedtimeIcon from "@mui/icons-material/Bedtime";
 
+import {db} from "../firebase-config"
+import { doc, getDoc } from 'firebase/firestore';
+
+
 import {
 	Chart as ChartJS,
 	Title,
@@ -20,8 +24,6 @@ import {
 	Tooltip,
 	Legend
 } from "chart.js";
-// import { Bed } from "@mui/icons-material";
-// import { color } from "chart.js/helpers";
 
 ChartJS.register(
 	CategoryScale,
@@ -36,6 +38,10 @@ ChartJS.register(
 const yesterday = dayjs().subtract(1, "day");
 
 function App() {
+
+	const [heartRate, setHeartRate] = useState(0); // Initializing with 0 or a default value
+
+
 	const generateTimeLabels = () => {
 		const labels = [];
 		for (let hour = 8; hour <= 24 + 1; hour++) {
@@ -45,6 +51,31 @@ function App() {
 		}
 		return labels;
 	};
+
+	useEffect(() => {
+        const fetchAverageHeartRate = async () => {
+            const docRef = doc(db, 'healthData', 'healthdata'); // Specify the correct document ID
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const samples = docSnap.data().samples; // Assuming the data structure includes an array of samples
+                const heartRateSamples = samples.filter(sample => sample.type === "HKQuantityTypeIdentifierHeartRate");
+                
+                if (heartRateSamples.length > 0) {
+                    const total = heartRateSamples.reduce((acc, sample) => acc + sample.value, 0);
+                    const average = total / heartRateSamples.length;
+                    setHeartRate(average.toFixed(2)); // Set the calculated average, rounded to two decimal places
+                } else {
+                    console.log("No heart rate samples found.");
+                }
+            } else {
+                console.log("No such document!");
+            }
+        };
+
+        fetchAverageHeartRate();
+    }, []);
+	
 
 	const [bardata, setBardata] = useState({
 		labels: generateTimeLabels(), // Use generated time labels
@@ -108,7 +139,7 @@ function App() {
 			<div className="dashboard">
 				<div className="latest-puff">
 					<h1>You&apos;re on a 4 day streak of cutting down usage!</h1>
-					<h3 className="secondary">3 days left to hit a new milestone</h3>
+					<h5 className="secondary">3 days left to hit a new milestone</h5>
 					<div className="bar-progress">
 						<div className="bar-fill"></div>
 					</div>
@@ -135,7 +166,6 @@ function App() {
 								<div className="record-bar-fill">
 									<span className="personal-record">
 										Personal Record&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
-										&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
 									</span>
 								</div>
 							</div>
@@ -161,20 +191,29 @@ function App() {
 									className="heart-icon"
 									sx={{ fontSize: "60px" }}
 								/>
-								<h2>70&nbsp;BPM</h2>
-								<span>Avg&nbsp;Heart&nbsp;Rate</span>
+								<div className="metric-container">
+								<h2>{parseInt(heartRate)}&nbsp;BPM</h2>
+								<span>Avg.&nbsp;Heart&nbsp;Rate</span>
+								</div>
+								
 							</div>
 							<div className="sleep-vitals">
 								<BedtimeIcon className="bed-icon" sx={{ fontSize: "60px" }} />
+								<div className="metric-container">
 								<h2>5&nbsp;hours</h2>
 								<span>Avg&nbsp;Sleep&nbsp;Time</span>
+								</div>
 							</div>
 						</div>
 					</DashboardSection>
 					<DashboardSection
 						className="goals"
 						title="Your Goals"
-					></DashboardSection>
+					>
+						<div className="goals-content">
+
+						</div>
+					</DashboardSection>
 					<DashboardSection
 						className="spending-stats"
 						title="Spending Stats"
@@ -224,13 +263,14 @@ function App() {
 										<h3>354</h3>
 									</div>
 									<div className="total">
-										<p>Vape Free Record</p>
-										<h3>4 hours</h3>
-									</div>
-									<div className="total">
 										<p>Avg. Hits Per Hour</p>
 										<h3>8</h3>
 									</div>
+									<div className="total">
+										<p>Longest Vape Free Streak</p>
+										<h3>4 hours</h3>
+									</div>
+									
 								</div>
 
 								<div className="bar-chart">

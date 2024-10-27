@@ -18,7 +18,6 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	/* background-color: lightblue; */
 }
 
 .latest-puff {
@@ -64,13 +63,14 @@
 	background: rgba(118, 146, 255, 0.25);
 	flex-basis: 300px;
 	flex-grow: 1;
+	/* justify-content: ; */
 	/* max-width: 300px; */
 }
 
 .streak {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 30px;
 }
 
 .streak-content {
@@ -79,28 +79,29 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
+	/* justify-content: center; */
 }
+
 
 .record-bar {
 	height: 100px;
-	width: 40px;
+	width: 20px;
 	background: rgba(118, 146, 255, 0.25);
-	border-radius: 5px 5px 0 0;
 	display: flex;
 	align-items: flex-end;
 }
 .record-bar-fill {
 	padding: 0;
 	height: 60px;
-	width: 40px;
+	width: 20px;
 	background: #7692ff;
 	border-radius: 5px 5px 0 0;
 }
 
 .personal-record {
 	position: absolute;
-	margin-top: -60px;
-	margin-left: -110px;
+	margin-top: -58px;
+	margin-left: -105px;
 	font-size: 14px;
 	text-decoration: underline;
 }
@@ -114,11 +115,17 @@
 .daily-activity {
 	display: flex;
 	flex-direction: column;
-	gap: 30px;
+	gap: 20px;
+}
+
+.health-insights {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
 
 .health-insights-content {
-	padding: 30px;
+	padding: 0 30px;
 	display: flex;
 	flex-direction: row;
 	gap: 40px;
@@ -132,6 +139,12 @@
 	justify-content: center;
 	align-items: center;
 	gap: 20px;
+}
+
+.metric-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .usage-history {
