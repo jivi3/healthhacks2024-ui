@@ -21,7 +21,7 @@
 }
 
 .latest-puff {
-	padding: 30px 40px;
+	padding: 40px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -33,6 +33,11 @@
 	height: 15px;
 	background: rgba(118, 146, 255, 0.25);
 	border-radius: 10px;
+}
+
+.bar-chart {
+	/* display: block; */
+	width: 100%;
 }
 
 .bar-fill {
@@ -53,7 +58,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 20px;
-	padding: 0 40px;
+	padding: 0 30px;
 	/* justify-content: space-between; */
 }
 
@@ -62,7 +67,7 @@
 	border-radius: 20px;
 	background: rgba(118, 146, 255, 0.25);
 	flex-basis: 300px;
-	flex-grow: 1;
+	/* flex-grow: 1; */
 	/* justify-content: ; */
 	/* max-width: 300px; */
 }
@@ -81,7 +86,6 @@
 	align-items: center;
 	/* justify-content: center; */
 }
-
 
 .record-bar {
 	height: 100px;
@@ -109,7 +113,7 @@
 .daily-activity,
 .usage-history {
 	flex-basis: 600px;
-	flex-shrink: 1;
+	flex-grow: 1;
 }
 
 .daily-activity {
@@ -125,10 +129,10 @@
 }
 
 .health-insights-content {
-	padding: 0 30px;
+	padding: 0 20px;
 	display: flex;
 	flex-direction: row;
-	gap: 40px;
+	/* gap: 20px; */
 	justify-content: space-between;
 }
 
@@ -141,6 +145,15 @@
 	gap: 20px;
 }
 
+.spending-stats {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	flex-basis: 300px;
+	/* flex-shrink: 2; */
+	/* max-width: 300px; */
+}
+
 .metric-container {
 	display: flex;
 	flex-direction: column;
@@ -150,7 +163,8 @@
 .usage-history {
 	display: flex;
 	flex-direction: column;
-	gap: 30px;
+	gap: 20px;
+	/* flex: 1 1 600px; */
 }
 
 .css-14zsml0-MuiDateCalendar-root {
@@ -158,35 +172,43 @@
 }
 
 .usage-history-content {
-	/* padding: 30px; */
+	/* padding: 0 20px; */
 	display: flex;
-	flex: 0 1 400px;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: center;
 	align-items: center;
 	/* justify-content: space-between; */
-	gap: 60px;
+	gap: 20px;
 }
 .calendar-container {
 	/* width: 100%; */
-	/* max-width: 300px; */
+	max-width: 300px;
+	max-height: 300px;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	flex-basis: 300px;
+	flex-shrink: 2;
+	/* min */
+	/* align-items: center; */
 	justify-self: center;
 }
 .calendar {
 	max-width: 300px;
+	/* max-height: 300px; */
 	display: flex;
-	flex-basis: 300px;
+	flex-direction: column;
+	/* justify-content: center; */
+	/* align-items: center; */
+	/* flex-basis: 300px;
+	flex-shrink: 1; */
 }
 
 .day-stats {
-	width: 80%;
-	max-width: 800px;
 	display: flex;
 	flex-direction: column;
+	width: 100%;
+	/* max-width: 600px; */
 	flex: 1;
 	gap: 60px;
 }
@@ -200,9 +222,16 @@
 	padding: 0 60px;
 	display: flex;
 	flex-direction: row;
+	/* flex- */
 	justify-content: space-between;
-	/* gap: 80px; */
+	gap: 20px;
 	align-items: center;
+}
+
+.fade-in {
+	opacity: 0; /* Start hidden */
+	animation: fadeIn 1s forwards;
+	animation-delay: calc(var(--fade-order) * 0.05s);
 }
 
 .total {
@@ -210,6 +239,31 @@
 	flex-direction: column;
 	align-items: center;
 	/* justify-content: center; */
+}
+
+.fade-in:nth-child(1) {
+	--fade-order: 0;
+}
+.fade-in:nth-child(2) {
+	--fade-order: 1;
+}
+.fade-in:nth-child(3) {
+	--fade-order: 2;
+}
+.fade-in:nth-child(4) {
+	--fade-order: 3;
+}
+.fade-in:nth-child(5) {
+	--fade-order: 4;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 
 @media screen and (max-width: 1050px) {

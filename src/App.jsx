@@ -10,9 +10,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import BedtimeIcon from "@mui/icons-material/Bedtime";
 
-import {db} from "../firebase-config"
-import { doc, getDoc } from 'firebase/firestore';
-
+import { db } from "../firebase-config";
+import { doc, getDoc } from "firebase/firestore";
 
 import {
 	Chart as ChartJS,
@@ -38,9 +37,7 @@ ChartJS.register(
 const yesterday = dayjs().subtract(1, "day");
 
 function App() {
-
 	const [heartRate, setHeartRate] = useState(0); // Initializing with 0 or a default value
-
 
 	const generateTimeLabels = () => {
 		const labels = [];
@@ -53,29 +50,33 @@ function App() {
 	};
 
 	useEffect(() => {
-        const fetchAverageHeartRate = async () => {
-            const docRef = doc(db, 'healthData', 'healthdata'); // Specify the correct document ID
-            const docSnap = await getDoc(docRef);
+		const fetchAverageHeartRate = async () => {
+			const docRef = doc(db, "healthData", "healthdata"); // Specify the correct document ID
+			const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists()) {
-                const samples = docSnap.data().samples; // Assuming the data structure includes an array of samples
-                const heartRateSamples = samples.filter(sample => sample.type === "HKQuantityTypeIdentifierHeartRate");
-                
-                if (heartRateSamples.length > 0) {
-                    const total = heartRateSamples.reduce((acc, sample) => acc + sample.value, 0);
-                    const average = total / heartRateSamples.length;
-                    setHeartRate(average.toFixed(2)); // Set the calculated average, rounded to two decimal places
-                } else {
-                    console.log("No heart rate samples found.");
-                }
-            } else {
-                console.log("No such document!");
-            }
-        };
+			if (docSnap.exists()) {
+				const samples = docSnap.data().samples; // Assuming the data structure includes an array of samples
+				const heartRateSamples = samples.filter(
+					(sample) => sample.type === "HKQuantityTypeIdentifierHeartRate"
+				);
 
-        fetchAverageHeartRate();
-    }, []);
-	
+				if (heartRateSamples.length > 0) {
+					const total = heartRateSamples.reduce(
+						(acc, sample) => acc + sample.value,
+						0
+					);
+					const average = total / heartRateSamples.length;
+					setHeartRate(average.toFixed(2)); // Set the calculated average, rounded to two decimal places
+				} else {
+					console.log("No heart rate samples found.");
+				}
+			} else {
+				console.log("No such document!");
+			}
+		};
+
+		fetchAverageHeartRate();
+	}, []);
 
 	const [bardata, setBardata] = useState({
 		labels: generateTimeLabels(), // Use generated time labels
@@ -146,7 +147,7 @@ function App() {
 				</div>
 				<div className="dashboard-sections">
 					<DashboardSection
-						className="streak"
+						className="streak fade-in"
 						title="You've Been Vape Free For"
 					>
 						<div className="streak-content">
@@ -172,7 +173,7 @@ function App() {
 						</div>
 					</DashboardSection>
 					<DashboardSection
-						className="daily-activity"
+						className="daily-activity fade-in"
 						title="Activity for October 26"
 					>
 						<div className="bar-chart">
@@ -184,7 +185,10 @@ function App() {
 							/>
 						</div>
 					</DashboardSection>
-					<DashboardSection className="health-insights" title="Health Insights">
+					<DashboardSection
+						className="health-insights fade-in"
+						title="Health Insights"
+					>
 						<div className="health-insights-content">
 							<div className="heart-vitals">
 								<FavoriteIcon
@@ -192,33 +196,30 @@ function App() {
 									sx={{ fontSize: "60px" }}
 								/>
 								<div className="metric-container">
-								<h2>{parseInt(heartRate)}&nbsp;BPM</h2>
-								<span>Avg.&nbsp;Heart&nbsp;Rate</span>
+									<h2>{parseInt(heartRate)}&nbsp;BPM</h2>
+									<span>Avg.&nbsp;Heart&nbsp;Rate</span>
 								</div>
-								
 							</div>
 							<div className="sleep-vitals">
 								<BedtimeIcon className="bed-icon" sx={{ fontSize: "60px" }} />
 								<div className="metric-container">
-								<h2>5&nbsp;hours</h2>
-								<span>Avg&nbsp;Sleep&nbsp;Time</span>
+									<h2>5&nbsp;hours</h2>
+									<span>Avg&nbsp;Sleep&nbsp;Time</span>
 								</div>
 							</div>
 						</div>
 					</DashboardSection>
+					{/* <DashboardSection className="goals" title="Your Goals">
+						<div className="goals-content"></div>
+					</DashboardSection> */}
 					<DashboardSection
-						className="goals"
-						title="Your Goals"
-					>
-						<div className="goals-content">
-
-						</div>
-					</DashboardSection>
-					<DashboardSection
-						className="spending-stats"
+						className="spending-stats fade-in"
 						title="Spending Stats"
 					></DashboardSection>
-					<DashboardSection className="usage-history" title="Usage History">
+					<DashboardSection
+						className="usage-history fade-in"
+						title="Usage History"
+					>
 						<div className="usage-history-content">
 							<div className="calendar-container">
 								<DateCalendar
@@ -270,7 +271,6 @@ function App() {
 										<p>Longest Vape Free Streak</p>
 										<h3>4 hours</h3>
 									</div>
-									
 								</div>
 
 								<div className="bar-chart">
