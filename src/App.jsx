@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+// App.jsx
+
+import { useEffect, useState, useRef } from "react";
 import "./App.css";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import utc from "dayjs/plugin/utc";
 import duration from "dayjs/plugin/duration";
-import timezone from "dayjs/plugin/timezone"; // Import timezone plugin
-import minMax from "dayjs/plugin/minMax"; // Import minMax plugin
+import timezone from "dayjs/plugin/timezone";
+import minMax from "dayjs/plugin/minMax";
 import DashboardSection from "./components/DashboardSection/DashboardSection";
 import { Bar } from "react-chartjs-2";
 
@@ -14,9 +16,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import BedtimeIcon from "@mui/icons-material/Bedtime";
+import SendIcon from "@mui/icons-material/Send";
 
 import { db } from "../firebase-config";
-import { doc, onSnapshot } from "firebase/firestore"; // Import onSnapshot
+import { doc, onSnapshot } from "firebase/firestore";
 
 import {
   Chart as ChartJS,
@@ -28,6 +31,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+
+import axios from "axios";
 
 ChartJS.register(
   CategoryScale,
@@ -42,9 +47,9 @@ ChartJS.register(
 // Extend Day.js with necessary plugins
 dayjs.extend(customParseFormat);
 dayjs.extend(utc);
-dayjs.extend(timezone); // Extend with timezone plugin
+dayjs.extend(timezone);
 dayjs.extend(duration);
-dayjs.extend(minMax); // Extend with minMax plugin
+dayjs.extend(minMax);
 
 const yesterday = dayjs().subtract(1, "day");
 
@@ -56,6 +61,13 @@ function App() {
     hours: 0,
     minutes: 0,
   }); // State to store vape-free duration
+
+  const [chatInput, setChatInput] = useState(""); // State for chatbot input
+  const [chatMessages, setChatMessages] = useState([]); // State for chatbot messages
+
+  const [userData, setUserData] = useState(null); // State to store user's vaping data
+
+  const chatMessagesRef = useRef(null); // Ref to scroll to bottom of chat
 
   const generateTimeLabels = () => {
     const labels = [];
@@ -150,6 +162,12 @@ function App() {
             },
           ],
         }));
+
+        // Store user data for chatbot
+        setUserData((prevData) => ({
+          ...prevData,
+          events,
+        }));
       } else {
         console.log("No such document for today's data!");
       }
@@ -175,9 +193,7 @@ function App() {
         const counts = new Array(24).fill(0); // Initialize counts array for 24 hours
 
         // For the day we're interested in (selected date)
-        const targetDate = selectedDate
-          .tz("America/New_York")
-          .startOf("day");
+        const targetDate = selectedDate.tz("America/New_York").startOf("day");
 
         // Process each event
         events.forEach((event) => {
@@ -285,6 +301,12 @@ function App() {
           );
           const average = total / heartRateSamples.length;
           setHeartRate(average.toFixed(2)); // Set the calculated average, rounded to two decimal places
+
+          // Store heart rate data for chatbot
+          setUserData((prevData) => ({
+            ...prevData,
+            heartRate: average.toFixed(2),
+          }));
         } else {
           console.log("No heart rate samples found.");
         }
@@ -296,6 +318,13 @@ function App() {
     // Cleanup listener on unmount
     return () => unsubscribe();
   }, []);
+
+  // Scroll to bottom of chat when new message arrives
+  useEffect(() => {
+    if (chatMessagesRef.current) {
+      chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+    }
+  }, [chatMessages]);
 
   const baroptions = {
     responsive: true,
@@ -325,11 +354,106 @@ function App() {
     },
   };
 
+  // Function to handle chat input submission
+  const handleChatSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!chatInput.trim()) return;
+
+    // Add user's message to chat
+    setChatMessages((prevMessages) => [
+      ...prevMessages,
+      { sender: "user", text: chatInput },
+    ]);
+
+    // Prepare data for OpenAI API
+    const prompt = `
+You are a health assistant. The user has provided the following data:
+
+- Recent vape usage events: ${
+      userData?.events
+        ?.map((event) => {
+          const eventDate = dayjs(event.timestamp.toDate()).format(
+            "YYYY-MM-DD HH:mm"
+          );
+          return `\n  - ${eventDate}`;
+        })
+        .join("") || "No events"
+    }
+
+- Average heart rate: ${userData?.heartRate || "No data"}
+
+Using this information, answer the user's question:
+
+"${chatInput}"
+    `;
+
+    // Call OpenAI API
+    try {
+      const response = await axios.post(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: 150,
+          n: 1,
+          stop: null,
+          temperature: 0.7,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+          },
+        }
+      );
+
+      const assistantMessage = response.data.choices[0].message.content.trim();
+
+      // Add assistant's response to chat
+      setChatMessages((prevMessages) => [
+        ...prevMessages,
+        { sender: "bot", text: assistantMessage },
+      ]);
+    } catch (error) {
+      console.error("Error calling OpenAI API:", error);
+      setChatMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          sender: "bot",
+          text: "Sorry, I couldn't process your request at this time.",
+        },
+      ]);
+    }
+
+    // Clear chat input
+    setChatInput("");
+  };
+
+  // Helper function to calculate the longest streak of zero hits
+  function calculateLongestStreak(dataArray) {
+    let maxStreak = 0;
+    let currentStreak = 0;
+
+    dataArray.forEach((value) => {
+      if (value === 0) {
+        currentStreak++;
+        if (currentStreak > maxStreak) {
+          maxStreak = currentStreak;
+        }
+      } else {
+        currentStreak = 0;
+      }
+    });
+
+    return maxStreak;
+  }
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div className="dashboard">
         <div className="latest-puff">
-          <h1>You&apos;re on a 0 day streak of cutting down usage!</h1>
+          <h1>KicNic</h1>
           <h5 className="secondary">3 days left to hit a new milestone</h5>
           <div className="bar-progress">
             <div className="bar-fill"></div>
@@ -382,7 +506,7 @@ function App() {
             <div className="health-insights-content">
               <div className="heart-vitals">
                 <FavoriteIcon
-                  className="heart-icon"
+                  className="heart-icon" // Add class for animation
                   sx={{ fontSize: "60px" }}
                 />
                 <div className="metric-container">
@@ -392,7 +516,7 @@ function App() {
               </div>
               <div className="sleep-vitals">
                 <BedtimeIcon
-                  className="bed-icon"
+                  className="bed-icon" // Add class for animation
                   sx={{ fontSize: "60px" }}
                 />
                 <div className="metric-container">
@@ -402,10 +526,35 @@ function App() {
               </div>
             </div>
           </DashboardSection>
-          <DashboardSection
-            className="spending-stats fade-in"
-            title="Spending Stats"
-          ></DashboardSection>
+          <DashboardSection className="chat-bot fade-in" title="Chat Bot">
+            <div className="chat-bot-content">
+              <div className="chat-messages" ref={chatMessagesRef}>
+                {chatMessages.map((message, index) => (
+                  <div
+                    key={index}
+                    className={`chat-message ${
+                      message.sender === "user" ? "user" : "bot"
+                    }`}
+                  >
+                    <div className="message-bubble">
+                      <p>{message.text}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <form className="chat-input" onSubmit={handleChatSubmit}>
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  placeholder="Ask a health question..."
+                />
+                <button type="submit">
+                  <SendIcon />
+                </button>
+              </form>
+            </div>
+          </DashboardSection>
           <DashboardSection
             className="usage-history fade-in"
             title="Usage History"
@@ -474,7 +623,6 @@ function App() {
                   <div className="total">
                     <p>Longest Vape Free Streak</p>
                     <h3>
-                      {/* Calculate longest zero sequence in bardata */}
                       {calculateLongestStreak(bardata.datasets[0].data)} hours
                     </h3>
                   </div>
@@ -494,25 +642,6 @@ function App() {
       </div>
     </LocalizationProvider>
   );
-}
-
-// Helper function to calculate the longest streak of zero hits
-function calculateLongestStreak(dataArray) {
-  let maxStreak = 0;
-  let currentStreak = 0;
-
-  dataArray.forEach((value) => {
-    if (value === 0) {
-      currentStreak++;
-      if (currentStreak > maxStreak) {
-        maxStreak = currentStreak;
-      }
-    } else {
-      currentStreak = 0;
-    }
-  });
-
-  return maxStreak;
 }
 
 export default App;
