@@ -22,33 +22,181 @@
 }
 
 .latest-puff {
-	padding: 40px;
+	padding: 30px 40px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	gap: 5px;
+	gap: 10px;
+}
+
+.bar-progress {
+	width: 100%;
+	height: 15px;
+	background: rgba(118, 146, 255, 0.25);
+	border-radius: 10px;
+}
+
+.bar-fill {
+	position: relative;
+	left: 0;
+	width: 80%;
+	height: 15px;
+	background: #7692ff;
+	border-radius: 10px;
 }
 
 .dashboard {
-	/* padding: 40px; */
 	display: flex;
 	flex-direction: column;
-	/* flex-wrap: wrap; */
-	/* justify-content: space-between; */
-	/* gap: 20px; */
 }
 
 .dashboard-sections {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
 	padding: 0 40px;
+	/* justify-content: space-between; */
+}
+
+.dashboard-section {
+	padding: 20px;
+	border-radius: 20px;
+	background: rgba(118, 146, 255, 0.25);
+	flex-basis: 300px;
+	flex-grow: 1;
+	/* max-width: 300px; */
+}
+
+.streak {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.streak-content {
+	padding: 20px;
 	display: flex;
 	flex-direction: row;
-	gap: 20px;
-	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.record-bar {
+	height: 100px;
+	width: 40px;
+	background: rgba(118, 146, 255, 0.25);
+	border-radius: 5px 5px 0 0;
+	display: flex;
+	align-items: flex-end;
+}
+.record-bar-fill {
+	padding: 0;
+	height: 60px;
+	width: 40px;
+	background: #7692ff;
+	border-radius: 5px 5px 0 0;
+}
+
+.personal-record {
+	position: absolute;
+	margin-top: -60px;
+	margin-left: -110px;
+	font-size: 14px;
+	text-decoration: underline;
+}
+
+.daily-activity,
+.usage-history {
+	flex-basis: 600px;
+	flex-shrink: 1;
+}
+
+.daily-activity {
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+}
+
+.health-insights-content {
+	padding: 30px;
+	display: flex;
+	flex-direction: row;
+	gap: 40px;
 	justify-content: space-between;
 }
 
+.heart-vitals,
+.sleep-vitals {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+}
+
+.usage-history {
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+}
+
+.css-14zsml0-MuiDateCalendar-root {
+	margin: 0 !important;
+}
+
+.usage-history-content {
+	/* padding: 30px; */
+	display: flex;
+	flex: 0 1 400px;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	/* justify-content: space-between; */
+	gap: 60px;
+}
+.calendar-container {
+	/* width: 100%; */
+	/* max-width: 300px; */
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-self: center;
+}
+.calendar {
+	max-width: 300px;
+	display: flex;
+	flex-basis: 300px;
+}
+
+.day-stats {
+	width: 80%;
+	max-width: 800px;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	gap: 60px;
+}
+
 .secondary {
+	font-weight: 400px;
 	opacity: 0.5;
+}
+
+.day-metrics {
+	padding: 0 60px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	/* gap: 80px; */
+	align-items: center;
+}
+
+.total {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	/* justify-content: center; */
 }
 
 @media screen and (max-width: 1050px) {
@@ -61,16 +209,12 @@
 	.latest-puff {
 		text-align: center;
 	}
-	.streak {
-		flex: 2 1 40%; /* Make streak card larger */
+
+	.dashboard-sections {
+		padding: 0 10px;
 	}
-	.activity,
-	.health-insights {
-		flex: 1 1 25%; /* 3 smaller cards in the row */
-	}
-	.goals,
-	.spending-stats,
-	.usage-history {
-		flex: 1 1 30%; /* Adjust cards for a balanced layout */
+
+	.usage-history-content {
+		gap: 20px;
 	}
 }
