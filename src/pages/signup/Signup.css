@@ -1,0 +1,73 @@
+body {
+    height: 100vh; /* Full vertical height of the viewport */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black; /* Consistent background color */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    color: #f4f4f4; /* Ensures text is white for contrast */
+    box-sizing: border-box;
+  }
+  
+  .main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* Uses full width */
+    padding: 20px; /* Adds padding around the main container */
+  }
+  
+  .signup-container {
+    width: 100%; /* Full width within its parent container */
+    max-width: 600px; /* Maximum width */
+    padding: 40px;
+    border-radius: 8px;
+    background-color: rgba(118, 146, 255, 0.25); /* Semi-transparent background */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Adds depth with shadow */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .signup-title {
+    font-size: 32px; /* Ensures title is large enough */
+    font-weight: bold;
+    text-align: center; /* Center-aligns the title */
+  }
+  
+  .signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%; /* Ensures form uses all available space */
+  }
+  
+  .signup-form input,
+  .signup-form select {
+    width: 100%; /* Ensures inputs use the full width */
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #40455A; /* Dark background for inputs */
+    color: #FFFFFF;
+    font-size: 16px; /* Readable font size */
+  }
+  
+  .signup-button {
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #7692ff; /* Consistent button color */
+    color: #FFFFFF;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  
+  .signup-button:hover {
+    background-color: #4e72fc; /* Slightly darker on hover */
+  }
+  
