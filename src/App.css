@@ -2,7 +2,7 @@
 
 #root {
 	margin: 0;
-	height: 100svh;
+	height: 100%;
 }
 /* 
 .body {
@@ -12,6 +12,14 @@
 	background-repeat: no-repeat;
 	background-size: 100% auto;
 } */
+
+.title-text {
+	font-family: "Bebas Neue", sans-serif;
+	font-weight: 800;
+	font-size: 60px;
+	letter-spacing: normal;
+	font-style: normal;
+}
 
 .kpi-section {
 	margin: 0;
@@ -35,6 +43,7 @@
 	height: 15px;
 	background: rgba(118, 146, 255, 0.25);
 	border-radius: 10px;
+	overflow-x: hidden;
 }
 
 .bar-chart {
@@ -45,10 +54,15 @@
 .bar-fill {
 	position: relative;
 	left: 0;
-	width: 80%;
+	width: 0%;
+	/* width: 80%; */
 	height: 15px;
 	background: #7692ff;
 	border-radius: 10px;
+	animation-name: run;
+	animation-duration: 0.5s;
+	animation-fill-mode: forwards;
+	transition: width 0.5s ease-in-out; /* Animate width changes */
 }
 
 .dashboard {
@@ -68,8 +82,8 @@
 	padding: 20px;
 	border-radius: 20px;
 	background: rgba(118, 146, 255, 0.25);
-	flex-basis: 300px;
-	/* flex-grow: 1; */
+	/* flex-basis: 300px; */
+	flex-grow: 1;
 	/* justify-content: ; */
 	/* max-width: 300px; */
 }
@@ -127,7 +141,8 @@
 .health-insights {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	/* gap: 10px; */
+	justify-content: space-evenly;
 }
 
 .health-insights-content {
@@ -135,6 +150,7 @@
 	display: flex;
 	flex-direction: row;
 	/* gap: 20px; */
+	height: 100%;
 	justify-content: space-between;
 }
 
@@ -221,7 +237,7 @@
 }
 
 .day-metrics {
-	padding: 0 60px;
+	padding: 0 40px;
 	display: flex;
 	flex-direction: row;
 	/* flex- */
@@ -240,7 +256,14 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	text-align: center;
+	/* min-width: 100px; */
 	/* justify-content: center; */
+}
+
+.total {
+	margin: 0;
+	font-size: 14px;
 }
 
 .fade-in:nth-child(1) {
@@ -286,94 +309,121 @@
 	.usage-history-content {
 		gap: 20px;
 	}
+	.day-metrics {
+		gap: 5px;
+		padding: 0;
+	}
+}
+
+.chat-bot {
+	display: flex;
+	flex-direction: column;
+	flex-basis: 300px;
+	flex-grow: 1;
+	justify-content: space-between;
 }
 
 /* Chat Bot Styles */
 .chat-bot-content {
+	/* height: 100%; */
+	max-height: 300px;
 	display: flex;
 	flex-direction: column;
-	height: 400px;
+	/* align-items: space-between; */
+	justify-content: space-between;
 	border-radius: 10px;
-	overflow: hidden;
-  }
-  
-  .chat-messages {
+	/* overflow: hidden; */
+}
+
+.chat-messages {
+	max-height: 300px;
+	/* max-height: inherit; */
+	display: flex;
+	flex-direction: column;
+	/* flex-basis: 300px; */
+	/* flex-grow: 1; */
 	flex: 1;
+	/* flex: 1; */
+	/* flex */
+	/* flex-basis: 300px; */
+	/* flex-shrink: 1; */
 	overflow-y: auto;
 	padding: 10px;
-  }
-  
-  .chat-message {
+
+	overflow-y: scroll;
+}
+
+.chat-message {
 	display: flex;
 	margin-bottom: 10px;
-  }
-  
-  .chat-message.user {
+}
+
+.chat-message.user {
 	justify-content: flex-end;
-  }
-  
-  .chat-message.bot {
+}
+
+.chat-message.bot {
 	justify-content: flex-start;
-  }
-  
-  .message-bubble {
+}
+
+.message-bubble {
 	max-width: 70%;
 	padding: 10px 15px;
 	border-radius: 20px;
 	background-color: #e0e0e0;
 	color: #000;
 	font-size: 14px;
-  }
-  
-  .chat-message.user .message-bubble {
+}
+
+.chat-message.user .message-bubble {
 	background-color: #7692ff;
 	color: #fff;
 	border-bottom-right-radius: 0;
-  }
-  
-  .chat-message.bot .message-bubble {
+}
+
+.chat-message.bot .message-bubble {
 	background-color: #e0e0e0;
 	color: #000;
 	border-bottom-left-radius: 0;
-  }
-  
-  .chat-input {
+}
+
+.chat-input {
 	display: flex;
 	padding: 10px;
 
 	border-top: 1px solid #ccc;
-  }
-  
-  .chat-input input {
+}
+
+.chat-input input {
 	flex: 1;
 	padding: 10px;
 	font-size: 14px;
 	border: 1px solid #ccc;
 	border-radius: 20px;
 	outline: none;
-  }
-  
-  .chat-input button {
+}
+
+.chat-input button {
 	background: none;
 	border: none;
 	outline: none;
 	cursor: pointer;
 	padding: 0 10px;
 	color: #7692ff;
-  }
-  
-  .chat-input button:hover {
+}
+
+.chat-input button:hover {
 	color: #5670d7;
-  }
-  
-  .chat-input button:disabled {
+}
+
+.chat-input button:disabled {
 	color: #ccc;
 	cursor: not-allowed;
-  }
-  
+}
+
 /* Heart Icon Animation */
 .heart-icon {
-	animation: heartbeat 1.5s infinite;
+	animation: heartbeat 1s infinite;
 	transform-origin: center;
 }
 
@@ -419,5 +469,14 @@
 	}
 	100% {
 		transform: rotate(0deg);
+	}
+}
+
+@keyframes run {
+	from {
+		transform: translateX(-100%); /* Start off-screen to the left */
+	}
+	to {
+		transform: translateX(0%); /* End at the normal position */
 	}
 }
