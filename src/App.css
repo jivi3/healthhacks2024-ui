@@ -1,0 +1,76 @@
+#root {
+	margin: 0;
+	height: 100svh;
+}
+/* 
+.body {
+	height: 100svh;
+	background: url("/bg-waves.svg");
+	background-position: top center;
+	background-repeat: no-repeat;
+	background-size: 100% auto;
+} */
+
+.kpi-section {
+	margin: 0;
+	padding: 40px 60px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	/* background-color: lightblue; */
+}
+
+.latest-puff {
+	padding: 40px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 5px;
+}
+
+.dashboard {
+	/* padding: 40px; */
+	display: flex;
+	flex-direction: column;
+	/* flex-wrap: wrap; */
+	/* justify-content: space-between; */
+	/* gap: 20px; */
+}
+
+.dashboard-sections {
+	padding: 0 40px;
+	display: flex;
+	flex-direction: row;
+	gap: 20px;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+.secondary {
+	opacity: 0.5;
+}
+
+@media screen and (max-width: 1050px) {
+	.kpi-section {
+		padding: 60px;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.latest-puff {
+		text-align: center;
+	}
+	.streak {
+		flex: 2 1 40%; /* Make streak card larger */
+	}
+	.activity,
+	.health-insights {
+		flex: 1 1 25%; /* 3 smaller cards in the row */
+	}
+	.goals,
+	.spending-stats,
+	.usage-history {
+		flex: 1 1 30%; /* Adjust cards for a balanced layout */
+	}
+}
