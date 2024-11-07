@@ -223,12 +223,51 @@
 	flex-shrink: 1; */
 }
 
+.MuiCalendarOrClockPicker-root,
+.MuiCalendarOrClockPicker-root > div {
+	width: 290px;
+}
+
+.MuiCalendarPicker-root {
+	width: 250px;
+}
+
+.MuiCalendarPicker-root > div:first-child {
+	padding-left: 12px;
+	padding-right: 8px;
+	margin-bottom: 0px;
+}
+
+.MuiCalendarPicker-root > div:first-child > div:last-child > div {
+	width: 4px;
+}
+
+.PrivatePickersSlideTransition-root {
+	min-height: 230px;
+}
+
+button.MuiPickersDay-root.Mui-selected {
+	width: 35px;
+	height: 31px;
+}
+
+.day-stats-container {
+	/* width: 100%; */
+	display: flex;
+	flex-direction: row;
+	flex-grow: 1;
+	flex-basis: 300px;
+	min-width: 300px;
+	/* gap: 20px; */
+}
+
 .day-stats {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
-	/* max-width: 600px; */
-	flex: 1;
+	/* min-width: 600px; */
+	/* flex-basis: 300px; */
+	/* flex-grow: 2; */
 	gap: 60px;
 }
 
@@ -292,20 +331,12 @@
 	}
 }
 
-@media screen and (max-width: 1050px) {
-	.kpi-section {
+@media screen and (max-width: 1100px) {
+	/* .kpi-section {
 		padding: 60px;
 		flex-direction: column;
 		gap: 20px;
-	}
-
-	.latest-puff {
-		text-align: center;
-	}
-
-	.dashboard-sections {
-		padding: 0 5px;
-	}
+	} */
 
 	.usage-history-content {
 		gap: 20px;
@@ -313,6 +344,15 @@
 	.day-metrics {
 		gap: 5px;
 		padding: 0;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.dashboard-sections {
+		padding: 0 5px;
+	}
+	.latest-puff {
+		text-align: center;
 	}
 }
 

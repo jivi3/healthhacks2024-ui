@@ -629,43 +629,44 @@ Using this information, answer the user's question:
 									}}
 								/>
 							</div>
-
-							<div className="day-stats">
-								<div className="day-metrics">
-									<div className="total">
-										<p>Total Puffs</p>
-										<h3>
-											{bardata.datasets[0].data.reduce(
-												(acc, val) => acc + val,
-												0
-											)}
-										</h3>
-									</div>
-									<div className="total">
-										<p>Avg. Hits Per Hour</p>
-										<h3>
-											{(
-												bardata.datasets[0].data.reduce(
+							<div className="day-stats-container">
+								<div className="day-stats">
+									<div className="day-metrics">
+										<div className="total">
+											<p>Total Puffs</p>
+											<h3>
+												{bardata.datasets[0].data.reduce(
 													(acc, val) => acc + val,
 													0
-												) / 24
-											).toFixed(2)}
-										</h3>
+												)}
+											</h3>
+										</div>
+										<div className="total">
+											<p>Avg. Hits Per Hour</p>
+											<h3>
+												{(
+													bardata.datasets[0].data.reduce(
+														(acc, val) => acc + val,
+														0
+													) / 24
+												).toFixed(2)}
+											</h3>
+										</div>
+										<div className="total">
+											<p>Longest Vape Free Streak</p>
+											<h3>
+												{calculateLongestStreak(bardata.datasets[0].data)} hours
+											</h3>
+										</div>
 									</div>
-									<div className="total">
-										<p>Longest Vape Free Streak</p>
-										<h3>
-											{calculateLongestStreak(bardata.datasets[0].data)} hours
-										</h3>
-									</div>
-								</div>
 
-								<div className="bar-chart">
-									<Bar
-										className="bar"
-										data={bardata} // Use bardata for usage history
-										options={baroptions}
-									/>
+									<div className="bar-chart">
+										<Bar
+											className="bar"
+											data={bardata} // Use bardata for usage history
+											options={baroptions}
+										/>
+									</div>
 								</div>
 							</div>
 						</div>
