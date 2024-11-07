@@ -119,23 +119,31 @@ function App() {
 	}, []);
 
 	useEffect(() => {
-		const { hours, days } = vapeFreeDuration;
+		const { days, hours, minutes } = vapeFreeDuration;
 		let timeLeft;
 		let timeLabel;
 
-		// Determine time left based on current hours and days
-		if (days < 1) {
-			// If less than a day, show hours left until reaching 24 hours
+		if (days === 0 && hours === 0) {
+			// Less than 1 hour, show minutes left until reaching 60 minutes
+			timeLeft = 60 - minutes;
+			timeLabel = "minutes";
+		} else if (days === 0) {
+			// Less than 1 day, show hours left until reaching 24 hours
 			timeLeft = 24 - hours;
 			timeLabel = "hours";
 		} else if (days < 7) {
-			// If less than 7 days, show days left until reaching 7 days
+			// Less than 7 days, show days left until reaching 7 days
 			timeLeft = 7 - days;
 			timeLabel = "days";
 		} else {
-			// If 7 days or more, show weeks (starting from 2 weeks)
-			timeLeft = Math.ceil((days + 1) / 7); // Round up to the next week count
-			timeLabel = "weeks";
+			// 7 days or more, show weeks left until the next week milestone
+			const weeksCompleted = Math.floor(days / 7);
+			const nextWeekMilestone = weeksCompleted + 1;
+			timeLeft = nextWeekMilestone - weeksCompleted;
+			timeLabel = "week";
+			if (timeLeft > 1) {
+				timeLabel += "s";
+			}
 		}
 
 		setTimeLeftText(`${timeLeft} ${timeLabel} left to hit a new milestone`);
@@ -340,24 +348,30 @@ function App() {
 
 				// Update vape-free duration
 				// Array to store event dates
-				const eventDates = [];
+				// Update vape-free duration
+				// Calculate the current time once at the start
+				const now = dayjs().tz("America/New_York");
 
-				events.forEach((event) => {
-					const eventTimestamp = event.timestamp;
-					if (eventTimestamp && typeof eventTimestamp.toDate === "function") {
-						const eventDate = dayjs(eventTimestamp.toDate()).tz(
-							"America/New_York"
-						);
-						eventDates.push(eventDate);
-					}
-				});
+				// Array to store event dates that are before now
+				const eventDates = events
+					.map((event) => {
+						const eventTimestamp = event.timestamp;
+						if (eventTimestamp && typeof eventTimestamp.toDate === "function") {
+							const eventDate = dayjs(eventTimestamp.toDate()).tz(
+								"America/New_York"
+							);
+							return eventDate;
+						} else {
+							return null;
+						}
+					})
+					.filter((eventDate) => eventDate && eventDate.isBefore(now));
 
 				if (eventDates.length > 0) {
 					// Find the most recent event date
 					const mostRecentDate = dayjs.max(eventDates);
 
-					// Calculate duration since most recent event
-					const now = dayjs().tz("America/New_York");
+					// Calculate duration since the most recent event
 					const diffMilliseconds = now.diff(mostRecentDate);
 
 					const duration = dayjs.duration(diffMilliseconds);
