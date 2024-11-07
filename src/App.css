@@ -3,6 +3,7 @@
 #root {
 	margin: 0;
 	height: 100%;
+	width: 100%;
 }
 /* 
 .body {
@@ -303,7 +304,7 @@
 	}
 
 	.dashboard-sections {
-		padding: 0 10px;
+		padding: 0 5px;
 	}
 
 	.usage-history-content {
