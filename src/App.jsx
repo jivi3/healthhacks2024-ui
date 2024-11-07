@@ -66,10 +66,29 @@ function App() {
 
 	const [chatInput, setChatInput] = useState(""); // State for chatbot input
 	const [chatMessages, setChatMessages] = useState([]); // State for chatbot messages
-	const [daysLeft, setDaysLeft] = useState(7); // State for chatbot messages
+	const [timeLeftText, setTimeLeftText] = useState("");
 
 	useEffect(() => {
-		setDaysLeft(7 - vapeFreeDuration.hours);
+		const { hours, days } = vapeFreeDuration;
+		let timeLeft;
+		let timeLabel;
+
+		// Determine time left based on current hours and days
+		if (days < 1) {
+			// If less than a day, show hours left until reaching 24 hours
+			timeLeft = 24 - hours;
+			timeLabel = "hours";
+		} else if (days < 7) {
+			// If less than 7 days, show days left until reaching 7 days
+			timeLeft = 7 - days;
+			timeLabel = "days";
+		} else {
+			// If 7 days or more, show weeks (starting from 2 weeks)
+			timeLeft = Math.ceil((days + 1) / 7); // Round up to the next week count
+			timeLabel = "weeks";
+		}
+
+		setTimeLeftText(`${timeLeft} ${timeLabel} left to hit a new milestone`);
 	}, [vapeFreeDuration]);
 
 	const [userData, setUserData] = useState(null); // State to store user's vaping data
@@ -87,8 +106,24 @@ function App() {
 	};
 
 	useEffect(() => {
-		// Calculate the target width based on vapeFreeDuration
-		const targetWidth = (vapeFreeDuration.hours * 100) / 7; // Adjust as needed
+		// Calculate target width based on the current milestone
+		const { hours, days } = vapeFreeDuration;
+		let milestoneHours; // Total hours for the next milestone
+
+		// Determine milestone based on current duration
+		if (days < 1) {
+			milestoneHours = 24; // Next milestone is 24 hours for the first day
+		} else if (days < 7) {
+			milestoneHours = 7 * 24; // Next milestone is 7 days
+		} else {
+			milestoneHours = 2 * 7 * 24; // Next milestone is 2 weeks
+		}
+
+		// Calculate total hours passed
+		const totalHours = days * 24 + hours;
+
+		// Calculate target width as a percentage of progress toward the next milestone
+		const targetWidth = (totalHours * 100) / milestoneHours;
 
 		// Set the width after a brief delay to trigger the transition
 		const timer = setTimeout(() => {
@@ -413,7 +448,7 @@ Using this information, answer the user's question:
 			const response = await axios.post(
 				"https://api.openai.com/v1/chat/completions",
 				{
-					model: "gpt-3.5-turbo",
+					model: "gpt-4o-mini",
 					messages: [{ role: "user", content: prompt }],
 					max_tokens: 150,
 					n: 1,
@@ -476,9 +511,7 @@ Using this information, answer the user's question:
 			<div className="dashboard">
 				<div className="latest-puff">
 					<h1 className="title-text">KicNic</h1>
-					<h5 className="secondary">
-						{daysLeft} hours left to hit a new milestone
-					</h5>
+					<h5 className="secondary">{timeLeftText}</h5>
 					<div className="bar-progress">
 						<div
 							className="bar-fill"
