@@ -13,6 +13,7 @@ import { Bar } from "react-chartjs-2";
 
 import { DateCalendar, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import ReactMarkdown from "react-markdown";
 
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import BedtimeIcon from "@mui/icons-material/Bedtime";
@@ -53,6 +54,11 @@ dayjs.extend(minMax);
 
 const yesterday = dayjs().subtract(1, "day");
 
+// const renderMarkdown = (text) => {
+// 	// Replace `**bold text**` with HTML <b> tags
+// 	return text.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+//   };
+
 function App() {
 	const [heartRate, setHeartRate] = useState(0); // Initializing with 0 or a default value
 	const [selectedDate, setSelectedDate] = useState(dayjs().startOf("day")); // Default to today at start of day
@@ -67,6 +73,50 @@ function App() {
 	const [chatInput, setChatInput] = useState(""); // State for chatbot input
 	const [chatMessages, setChatMessages] = useState([]); // State for chatbot messages
 	const [timeLeftText, setTimeLeftText] = useState("");
+	const [loading, setLoading] = useState(false); // State for loading indicator
+
+	useEffect(() => {
+		const scrollPosition = { y: 0 }; // Variable to store scroll position
+
+		// Function to handle input focus and store the current scroll position
+		const handleFocus = () => {
+			scrollPosition.y = window.scrollY;
+		};
+
+		// Function to handle form submit, blur the input, and reset scroll position
+		const handleFormSubmit = () => {
+			// Blur the currently focused input to close the keyboard
+			const activeElement = document.activeElement;
+			if (
+				activeElement &&
+				(activeElement.tagName === "INPUT" ||
+					activeElement.tagName === "TEXTAREA")
+			) {
+				activeElement.blur();
+			}
+
+			// Scroll back to stored position after keyboard is closed
+			window.scrollTo(0, scrollPosition.y);
+		};
+
+		// Attach the focus event listeners to all inputs
+		const inputs = document.querySelectorAll("input, textarea");
+		inputs.forEach((input) => {
+			input.addEventListener("focus", handleFocus);
+		});
+
+		// Find the form element and attach the submit event listener
+		const form = document.querySelector("form");
+		form?.addEventListener("submit", handleFormSubmit);
+
+		// Cleanup event listeners on component unmount
+		return () => {
+			inputs.forEach((input) => {
+				input.removeEventListener("focus", handleFocus);
+			});
+			form?.removeEventListener("submit", handleFormSubmit);
+		};
+	}, []);
 
 	useEffect(() => {
 		const { hours, days } = vapeFreeDuration;
@@ -421,6 +471,9 @@ function App() {
 			{ sender: "user", text: chatInput }
 		]);
 
+		setChatInput("");
+		setLoading(true); // Start loading
+
 		// Prepare data for OpenAI API
 		const prompt = `
 You are a health assistant. The user has provided the following data:
@@ -438,7 +491,9 @@ You are a health assistant. The user has provided the following data:
 
 - Average heart rate: ${userData?.heartRate || "No data"}
 
-Using this information, answer the user's question:
+- Timestamp of this query: ${dayjs().format("YYYY-MM-DD HH:mm")}
+
+Using this information, answer the user's question in a simple and readable way:
 
 "${chatInput}"
     `;
@@ -450,7 +505,7 @@ Using this information, answer the user's question:
 				{
 					model: "gpt-4o-mini",
 					messages: [{ role: "user", content: prompt }],
-					max_tokens: 150,
+					max_tokens: 300,
 					n: 1,
 					stop: null,
 					temperature: 0.7
@@ -479,10 +534,9 @@ Using this information, answer the user's question:
 					text: "Sorry, I couldn't process your request at this time."
 				}
 			]);
+		} finally {
+			setLoading(false); // Stop loading once response is received
 		}
-
-		// Clear chat input
-		setChatInput("");
 	};
 
 	// Helper function to calculate the longest streak of zero hits
@@ -504,7 +558,7 @@ Using this information, answer the user's question:
 		return maxStreak;
 	}
 
-	console.log(vapeFreeDuration.days);
+	// console.log(vapeFreeDuration.days);
 
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -602,15 +656,49 @@ Using this information, answer the user's question:
 										}`}
 									>
 										<div className="message-bubble">
-											<p>{message.text}</p>
+											<ReactMarkdown
+												components={{
+													h1: ({ ...props }) => (
+														<span
+															style={{ fontSize: "24px", fontWeight: "bold" }}
+															{...props}
+														/>
+													),
+													h2: ({ ...props }) => (
+														<span
+															style={{ fontSize: "17px", fontWeight: "bold" }}
+															{...props}
+														/>
+													),
+													h3: ({ ...props }) => (
+														<span
+															style={{ fontSize: "17px", fontWeight: "bold" }}
+															{...props}
+														/>
+													),
+													p: ({ ...props }) => (
+														<p style={{ fontSize: "17px" }} {...props} />
+													)
+												}}
+											>
+												{message.text}
+											</ReactMarkdown>
 										</div>
 									</div>
 								))}
+								{loading && (
+									<div className="chat-message bot">
+										<div className="message-bubble">
+											<span>Typing...</span> {/* Loader text */}
+										</div>
+									</div>
+								)}
 							</div>
 							<form className="chat-input" onSubmit={handleChatSubmit}>
 								<input
 									type="text"
 									value={chatInput}
+									onSubmit={handleChatSubmit}
 									onChange={(e) => setChatInput(e.target.value)}
 									placeholder="Ask a health question..."
 								/>
