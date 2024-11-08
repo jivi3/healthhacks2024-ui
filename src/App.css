@@ -379,6 +379,7 @@ button.MuiPickersDay-root.Mui-selected {
 	}
 	.latest-puff {
 		text-align: center;
+		padding: 20px;
 	}
 	.chat-bot-content {
 		min-height: 500px;
