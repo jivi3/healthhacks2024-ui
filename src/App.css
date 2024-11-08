@@ -132,7 +132,7 @@
 
 .usage-history {
 	flex-basis: 600px;
-	flex-grow: 1;
+	flex-grow: 3;
 }
 
 .daily-activity {
@@ -356,7 +356,7 @@ button.MuiPickersDay-root.Mui-selected {
 	display: flex;
 	flex-direction: column;
 	flex-basis: 300px;
-	flex-grow: 3;
+	flex-grow: 1;
 	justify-content: space-between;
 	min-height: 300px;
 }
