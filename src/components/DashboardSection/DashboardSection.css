@@ -10,5 +10,6 @@
 	flex-direction: column;
 	/* flex-basis: 300px;
 	flex-grow: 1 0 300px; */
+	justify-content: center;
 	height: 100%;
 }
