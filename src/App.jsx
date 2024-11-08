@@ -148,7 +148,6 @@ function App() {
 
 		setTimeLeftText(`${timeLeft} ${timeLabel} left to hit a new milestone`);
 	}, [vapeFreeDuration]);
-
 	const [userData, setUserData] = useState(null); // State to store user's vaping data
 
 	const chatMessagesRef = useRef(null); // Ref to scroll to bottom of chat
@@ -165,23 +164,34 @@ function App() {
 
 	useEffect(() => {
 		// Calculate target width based on the current milestone
-		const { hours, days } = vapeFreeDuration;
-		let milestoneHours; // Total hours for the next milestone
+		const { days, hours, minutes } = vapeFreeDuration;
+		let milestoneMinutes; // Total minutes for the next milestone
 
 		// Determine milestone based on current duration
-		if (days < 1) {
-			milestoneHours = 24; // Next milestone is 24 hours for the first day
+		if (days === 0 && hours === 0) {
+			// Less than 1 hour
+			milestoneMinutes = 60; // Next milestone is 60 minutes
+		} else if (days === 0) {
+			// Less than 1 day
+			milestoneMinutes = 24 * 60; // Next milestone is 24 hours
 		} else if (days < 7) {
-			milestoneHours = 7 * 24; // Next milestone is 7 days
+			// Less than 7 days
+			milestoneMinutes = 7 * 24 * 60; // Next milestone is 7 days
 		} else {
-			milestoneHours = 2 * 7 * 24; // Next milestone is 2 weeks
+			// 7 days or more
+			const weeksCompleted = Math.floor(days / 7);
+			milestoneMinutes = (weeksCompleted + 1) * 7 * 24 * 60; // Next week milestone
 		}
 
-		// Calculate total hours passed
-		const totalHours = days * 24 + hours;
+		// Calculate total minutes passed
+		const totalMinutes = days * 24 * 60 + hours * 60 + minutes;
+		console.log(days, hours, minutes);
 
 		// Calculate target width as a percentage of progress toward the next milestone
-		const targetWidth = (totalHours * 100) / milestoneHours;
+		let targetWidth = (totalMinutes * 100) / milestoneMinutes;
+
+		// Ensure targetWidth is within 0% to 100%
+		targetWidth = Math.min(Math.max(targetWidth, 0), 100);
 
 		// Set the width after a brief delay to trigger the transition
 		const timer = setTimeout(() => {
